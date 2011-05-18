@@ -1,0 +1,52 @@
+events modifiers:
+	type/content
+		key press
+			which key
+			which mods
+		key release
+			which key
+			which mods
+		mouse press
+			which button
+		mouse release
+			which button
+		mouse move
+			delta-x, delta-y
+		urgent
+		new window?
+	mode
+		"none"
+		user-specified
+	
+
+to specify an action:
+
+actions:
+	mode change
+	window focus change (this is hard, because you need to specify windows)
+	window move dx, dy
+	window resize dx, dy
+	window maximize [set/toggle]
+	window minimize [set/toggle]
+	window fullscreen [set/toggle]
+	window always-on-top [set/toggle]
+	window close
+	window kill
+	restart
+	exit
+	config reload
+	run command (e.g. decorator for this window, or menu for this window, or whatever)
+		commands of form: "command <wid> [wid...]"
+		print actions on their standard output
+alt-tab example:
+	in mode "none" alt-tab press
+		puts into mode "alt-tab"
+	in mode "alt-tab" alt release
+		puts into mode "none"
+	in mode "alt-tab" tab hit
+		hide current window
+		nextwindow
+	in mode "alt-tab" tab hit
+		hide current window
+		prevwindow
+		

@@ -1,0 +1,2 @@
+#!/bin/sh
+XNEST_APP=$1 xinit ./xinitrc -- /usr/bin/Xnest :1

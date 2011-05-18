@@ -1,0 +1,5 @@
+faidwm
+
+use "build.sh faidwm" to build
+
+use "xnest-test faidwm" to test (using XNest)

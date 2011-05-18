@@ -1,0 +1,556 @@
+[18:47:23] MonkeyofDoom has joined #FaiD3.0.
+[18:47:23] <Shishichi> "If you think the world is broken, every machine looks like the hammer that broke it." - MonkeyofDoom
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o MonkeyofDoom
+[18:47:31] <MonkeyofDoom> argh
+[20:32:38] Spock has joined #FaiD3.0.
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o Spock
+[20:32:38] <Shishichi> "They fall down and I spin them around so they fit in the ground like hand in glove" - Spock
+[20:33:05] Data has joined #FaiD3.0.
+:vervet.foonetic.net MODE #FaiD3.0 +o Data
+[20:33:06] <Shishichi> "My gonad monad has an enormous continuation" - Data
+[20:33:11] L has joined #FaiD3.0.
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o L
+[20:33:12] <Shishichi> "I'm concerned that we're sitting here like I'm a responsible adult. I'm pretty sure I stopped growing up in my teens and have been faking ever since." - L
+[20:41:09] NB has joined #FaiD3.0.
+[20:41:10] <Shishichi> "THANK GOD YOU'RE HERE" - NB
+[20:44:33] <MonkeyofDoom> installing xnest and beginning code writing for faidwm
+[21:06:32] <MonkeyofDoom> !faidwm
+[21:06:34] <Shishichi> http://faidwiki.niexs.net/wiki/FaiD_Window_Manager
+[21:06:36] <KitnBot> Title: FaiD Window Manager - FaiDwiki (at faidwiki.niexs.net)
+[21:06:48] <MonkeyofDoom> my thoughts for actually writing this piece of shit
+[21:07:20] <MonkeyofDoom> are basically that that all events will be handled in a more-or-less generic way
+[21:07:23] <MonkeyofDoom> and responded to similarly
+[21:07:28] <MonkeyofDoom> so in your configuration
+[21:07:37] <MonkeyofDoom> you write out what to do for a given event
+[21:07:57] <MonkeyofDoom> e.g. middle-click in a client, or right-click drag on the root window
+[21:08:38] <MonkeyofDoom> but I'm trying to figure out what all the possible sorts of events would be so that I can design a comprehensive format for specifying them
+[21:16:07] <MonkeyofDoom> so for each event that happens
+[21:16:10] <MonkeyofDoom> e.g. a hotkey or mouse action
+[21:16:17] <MonkeyofDoom> you can do one of a few actions
+[21:16:24] <MonkeyofDoom> like moving a window a given number of pixels
+[21:16:30] <MonkeyofDoom> or resizing
+[21:16:38] <MonkeyofDoom> max/min/fullscreen set/toggle
+[21:16:48] <MonkeyofDoom> or change the "mode"
+[21:17:25] <MonkeyofDoom> and that "mode" can be used to do things like modal dragging of windows, or emacs-style key sequences
+[21:17:29] <MonkeyofDoom> or other crazy shit
+[21:18:16] <MonkeyofDoom> basically let users construct a DFA to do what they want based on user input
+[21:18:44] <MonkeyofDoom> does this seem like a good approach?
+[21:19:12] <MonkeyofDoom> neutrak L ping
+[21:22:15] <L> what what in the butt?
+[21:22:16] <Shishichi> ACTION readies "The Pain".
+[21:22:52] <MonkeyofDoom> :|
+[21:22:57] <L> sorry
+[21:23:01] <L> I was packing stuff
+[21:23:02] <MonkeyofDoom> does that idea seem reasonable/sufficiently flexible?
+[21:23:08] <L> reading now
+[21:23:09] <MonkeyofDoom> np, I figured you might be
+[21:23:12] <MonkeyofDoom> ty
+[21:24:13] <L> you might need some other events too
+[21:24:16] <L> like urgent
+[21:24:21] <MonkeyofDoom> mm
+[21:24:30] <L> or whatever other stuff you want the user to be able to configure handling for
+[21:24:32] <MonkeyofDoom> yeah
+[21:24:41] <MonkeyofDoom> laundry lists for such things would be appreciated
+[21:24:51] <MonkeyofDoom> because it sucks to design a general system and then find places it wouldn't work
+[21:25:10] <L> normally I'd be all over this
+[21:25:14] <L> you kinda caught me at a bad time :P
+[21:25:14] <MonkeyofDoom> but busy?
+[21:25:15] <MonkeyofDoom> mm
+[21:25:16] <MonkeyofDoom> np
+[21:25:23] <MonkeyofDoom> I won't write an entire wm without you
+[21:25:26] <MonkeyofDoom> :P
+[21:27:07] <L> you should look at awesome/dwm/wmii/etc. and see what they handle
+[21:27:12] <MonkeyofDoom> yeah
+[21:27:18] <L> either just the default configs or the API or whatnot
+[21:29:00] <MonkeyofDoom> actions I'd forgotten: closing windows
+[21:29:01] <MonkeyofDoom> :|
+[21:29:41] <L> heh
+[21:30:24] <L> also executing arbitrary commands (and ideally, executing arbitrary shell commands)
+[21:30:34] <MonkeyofDoom> ooooh
+[21:30:35] <MonkeyofDoom> you know what
+[21:30:36] <L> I hate when they don't let me do that
+[21:30:39] <MonkeyofDoom> re: executing commands
+[21:30:44] <MonkeyofDoom> which I was just thinking about
+[21:30:58] <MonkeyofDoom> you can have an exec mode that reads the data they print
+[21:31:08] <MonkeyofDoom> so when the command runs, it can be e.g. a window menu
+[21:31:12] <MonkeyofDoom> pass it the WID as the argument
+[21:31:22] <MonkeyofDoom> and it returns a command string that you parse like an action in the config file
+[21:31:25] <MonkeyofDoom> and do right then
+[21:31:28] <L> so like a synchronous spawn
+[21:31:33] <MonkeyofDoom> no ida?
+[21:31:35] <MonkeyofDoom> idea*
+[21:31:37] <MonkeyofDoom> whatis
+[21:31:38] <L> sounds good, but you'll need 4 variants then
+[21:31:40] <MonkeyofDoom> oh?
+[21:31:49] <L> spawn is awesome terminology for executing arbitrary commands
+[21:31:59] <L> it has spawn() and spawn_with_shell()
+[21:32:02] <MonkeyofDoom> ah
+[21:32:08] <L> you'd need sync_spawn() and sync_spawn_with_shell() too
+[21:32:17] <L> for when you want to grab the output
+[21:32:21] <MonkeyofDoom> yeah
+[21:32:22] <MonkeyofDoom> well
+[21:32:29] <MonkeyofDoom> does it have to be synchronous to get the output?
+[21:32:31] NieXS has joined #FaiD3.0.
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o NieXS
+[21:32:32] <Shishichi> "http://www.youtube.com/watch?v=5y9YWjrbpzk" - NieXS
+[21:32:34] <MonkeyofDoom> 'cause that might be painful for users
+[21:32:34] <KitnBot> Title: YouTube - Shoop da Whoop-Ima Firin Mah Lazah [Full Song] (at www.youtube.com)
+[21:32:35] <MonkeyofDoom> NieXS ping
+[21:32:41] <MonkeyofDoom> you want to see a wm get designed?
+[21:32:53] <L> well, more or less, you don't want it to terminate after first output
+[21:33:04] <L> because you don't know how much output there will potentially be until the thing exits
+[21:33:05] <MonkeyofDoom> mm
+[21:33:16] <MonkeyofDoom> my thought would be to just buffer it all until the program ends
+[21:33:20] <L> yeah
+[21:34:01] <MonkeyofDoom> NieXS: http://pastebin.com/08SATKF5
+[21:34:03] <KitnBot> Title: wm log - Pastebin.com (at pastebin.com)
+[21:34:05] <L> you'll need some sort of syntax for handling the output
+[21:34:09] <MonkeyofDoom> ?
+[21:34:25] <NieXS> sup
+[21:34:28] <NieXS> ACTION reads
+[21:34:29] <L> like: sync_spawn(date); print($1)
+[21:34:39] <L> er, that should probably be "date"
+[21:34:40] Shishichi has kicked L from #FaiD3.0 (Bad luck; Cheese's fault.)
+[21:34:47] L has joined #FaiD3.0.
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o L
+[21:34:48] <Shishichi> "I'm concerned that we're sitting here like I'm a responsible adult. I'm pretty sure I stopped growing up in my teens and have been faking ever since." - L
+[21:34:51] <MonkeyofDoom> not sure I follow, L
+[21:34:51] <L> depends on your syntax preferences :P
+[21:34:54] <L> well
+[21:35:07] <L> when our command returns something we need syntax to *use* that something
+[21:35:11] <MonkeyofDoom> my thought is anyt you sync_spawn will have its stdout interpreted as actions in the same syntax as the config format
+[21:35:15] <MonkeyofDoom> for actions
+[21:35:29] <L> oh, and make people write their own scripts?
+[21:35:43] <MonkeyofDoom> scripts?
+[21:35:46] <L> well
+[21:36:06] <L> I'm thinking, for example, when you click on a window you want its titlebar to show `date`
+[21:36:18] <L> but obviously sync_spawn("date") will not return actions
+[21:36:22] <MonkeyofDoom> yeah
+[21:36:29] <MonkeyofDoom> you would write a script in that case
+[21:36:31] <MonkeyofDoom> my thought is
+[21:36:34] <L> so you'd have to write a wrapper script that returns something like "set_title(`date`)"
+[21:36:38] <MonkeyofDoom> sync_spawn (or we rename it)
+[21:36:46] <MonkeyofDoom> because it might not be /sync/ really
+[21:37:07] <L> I thought we agreed it had to be, to know that the output was finished o.O
+[21:37:26] <MonkeyofDoom> you can just non-busy-wait on the process closing or summat
+[21:37:29] <MonkeyofDoom> you have to wait for it to end
+[21:37:39] <MonkeyofDoom> but not necessarily synchronously, you can do w/e in the meantime
+[21:37:41] <MonkeyofDoom> no?
+[21:37:46] <L> er
+[21:37:47] Shishichi has kicked L from #FaiD3.0 (Bad luck; Cheese's fault.)
+[21:37:52] L has joined #FaiD3.0.
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o L
+[21:37:53] <Shishichi> "I'm concerned that we're sitting here like I'm a responsible adult. I'm pretty sure I stopped growing up in my teens and have been faking ever since." - L
+[21:37:53] <L> dammit Shishichi
+[21:37:53] <MonkeyofDoom> wow, you have bad luck today
+[21:37:54] <Shishichi> That's me!
+[21:37:54] <Nodus> Terrible fucking bot.
+[21:38:06] <L> I think you're confusing "synchronous" with "single-threaded"
+[21:38:15] <MonkeyofDoom> I could be
+[21:38:20] <L> synchronous just means we don't move on to the next instruction until this one finishes
+[21:38:26] <MonkeyofDoom> we could though
+[21:38:50] <L> yeah, if you define the output to be actions, you can
+[21:38:51] <MonkeyofDoom> why not allow one spawned command to take a week, literally, and perform others in the meantime?
+[21:38:57] <MonkeyofDoom> it's what I'd do
+[21:39:03] <L> I thought it was just gonna return strings that would have to be handled in-line in the event handler
+[21:39:14] <MonkeyofDoom> output as actions seems a) simple and b) flexible imo
+[21:39:20] <MonkeyofDoom> unless there's a reason not to I'll plan on it
+[21:39:28] <L> so like... spawn and spawn_with_output? dunno a good name for that
+[21:39:36] <Nodus> What language is this going to be in?
+[21:39:40] <MonkeyofDoom> spawn_for_action()
+[21:39:41] <NieXS> C
+[21:39:44] <MonkeyofDoom> implemented in C
+[21:39:50] <MonkeyofDoom> but that's mostly immaterial
+[21:40:01] <L> spawn_for_action_with_shell()? spawn_with_shell_for_action()?
+[21:40:07] <Nodus> If you think so ;)
+[21:40:08] <MonkeyofDoom> the former
+[21:40:10] <L> I think we need two verbs
+[21:40:23] <MonkeyofDoom> Nodus: are there good Xlib bindings for a different language?
+[21:40:34] <L> otherwise I (and probably any other users who didn't write the thing) are gonna keep having to look up the way that action is phrased
+[21:40:37] <MonkeyofDoom> yeah
+[21:41:00] <MonkeyofDoom> anyhow, for now we can call it spawn_for_action() in the simpler case
+[21:41:01] <Nodus> MonkeyofDoom, I'm not sure. Why do you ask? I didn't imply that C was a poor choice.
+[21:41:01] <L> also what happens if your spawned script returns the action of spawning itself?
+[21:41:09] <L> S P A W N C E P T I O N
+[21:41:23] <MonkeyofDoom> Nodus: the "if you think so ;)" sounded like you had something else in mind
+[21:41:25] <MonkeyofDoom> so I was crs
+[21:41:33] <MonkeyofDoom> L: then thank fuck it's async
+[21:41:36] <Nodus> That was to the immaterial, part. Nothing more.
+[21:41:42] <MonkeyofDoom> ah, well
+[21:41:49] <L> MoD: you still need to sanity check before you forkbomb :P
+[21:41:52] <MonkeyofDoom> with any luck I know enough C for the implementation language to be a non-problem
+[21:41:59] <MonkeyofDoom> L: eh, let them forkbomb
+[21:42:00] <MonkeyofDoom> bash did!
+[21:42:03] <MonkeyofDoom> and every other shell
+[21:42:04] <L> >_>
+[21:42:05] <Nodus> I would have recommended C anyway, due to the importance of using it.
+[21:42:10] <MonkeyofDoom> mmk
+[21:42:56] <MonkeyofDoom> but anyhow, unless you spawn the same command /twice/ you shouldn't cause resource consumption overload
+[21:43:17] <MonkeyofDoom> if you spawn the same just once, the async means it's just a pseudo-thready-thing taking up a fair bit of CPU
+[21:43:44] <L> yeah, infinite loop of spawning the same thing forever
+[21:43:59] <MonkeyofDoom> mhm
+[21:44:02] <L> churny but not forkbomby
+[21:44:04] <L> I guess we can live with that
+[21:44:09] <MonkeyofDoom> if it's what the user wanted
+[21:44:11] <MonkeyofDoom> :P
+[21:44:14] <L> fucking users
+[21:44:17] <L> they don't know what they want
+[21:44:23] <MonkeyofDoom> let them run cake!
+[21:44:55] <MonkeyofDoom> ACTION np "Commissioning a Symphony in C" - Cake
+[21:46:36] <MonkeyofDoom> oh, also
+[21:46:47] <MonkeyofDoom> I'm thinking, these programs that get spawned
+[21:47:06] <MonkeyofDoom> how will they specify the scope of the actions they return?
+[21:47:11] <MonkeyofDoom> like, if it says "maximize window"
+[21:47:20] <MonkeyofDoom> does that need to contain a window ID in the action?
+[21:47:36] <MonkeyofDoom> or would it be better to have the window just tied to the asynchronous exchange
+[21:47:57] <MonkeyofDoom> it seems like the former would be better, but it means we need a way to pass information to the spawned commands as well
+[21:54:19] <NieXS> command-line args?
+[21:54:32] <MonkeyofDoom> I guess
+[21:54:56] <MonkeyofDoom> would "command <wid> [wid...]" be good syntax?
+[21:55:05] <NB> Sounds like a disgruntled coder
+[21:55:05] <Shishichi> http://www.killmydaynow.com/wp-content/uploads/2011/02/Random-Funny-Pictures-Part-117_22-522x550.jpg
+[21:55:12] <NB> "Command-line? Arg."
+[21:55:17] <MonkeyofDoom> haha
+[21:56:07] <MonkeyofDoom> alright so
+[21:56:13] <MonkeyofDoom> this seems pretty fucking awesome
+[21:56:18] <MonkeyofDoom> time to write out some code
+[21:56:34] <MonkeyofDoom> wish me luck, X-WM communication is about the cruftiest thing ever afaik
+[21:57:19] <NieXS> have luck
+[21:57:24] <NieXS> , good fun
+[21:57:26] <NieXS> wait
+[21:58:33] <MonkeyofDoom> ?
+[22:00:45] <NieXS> nothing
+[22:00:47] <MonkeyofDoom> k
+[22:25:40] <MonkeyofDoom> wow, I'm going to be able to use fluxbox's run dialog as a WM-command dialog for this thing if I want
+[22:25:54] <MonkeyofDoom> #fuckyeah
+[22:28:39] <MonkeyofDoom> hmmm, okay
+[22:28:49] <MonkeyofDoom> also I think this window manager will need a notion of window lists
+[22:29:36] <MonkeyofDoom> so
+[22:29:45] <MonkeyofDoom> for alt-tab, for example, those actions can manipulate a window list
+[22:29:46] <Shishichi> You are a mastermind. . .
+[22:30:02] <MonkeyofDoom> and for "next window" "previous window" w/e, e.g. with mod4-left and mod4-right
+[22:34:48] <MonkeyofDoom> and you could even use window lists to have "tags" for windows
+[22:34:56] <MonkeyofDoom> sounds like that's a feature I'll have to have then
+[22:35:03] <MonkeyofDoom> tags/workspaces are a Good Thing
+[22:36:34] <MonkeyofDoom> for window lists, maybe be able to add to the top or bottom and move topward and bottomward, wrapping
+[22:36:37] <MonkeyofDoom> and remove
+[22:38:28] <Nodus> L would complain that the tags and workspaces is an unnecessary feature.
+[22:38:34] <L> no I wouldn't
+[22:38:43] <L> I already said I wouldn't be using this wm as it's designed with a more traditional featureset
+[22:39:03] <Nodus> Wait, then why not just use awesome or similar? 
+[22:39:07] <L> other people use it, so it's not unnecessary, it's just something I don't want/need
+[22:39:23] <L> because dwm does less of the shit I don't want, and doesn't have insane dependencies to support that shit
+[22:39:28] <MonkeyofDoom> mm
+[22:39:33] <Nodus> I mean for this project, not for you.
+[22:39:34] <MonkeyofDoom> this WM should just depend on Xlib
+[22:39:40] <MonkeyofDoom> Nodus: uh
+[22:39:43] <MonkeyofDoom> because awesome does hella shit
+[22:39:45] <L> because they don't like awesome?
+[22:39:52] <MonkeyofDoom> and is huge and needs its own cairo
+[22:39:54] <Nodus> And the alternatives?
+[22:40:00] <MonkeyofDoom> such as?
+[22:40:31] <Nodus> ratpoison, dwm, and that entire realm of lightweight, minimal featureset, wms.
+[22:40:36] <MonkeyofDoom> most don't allow for functionality that this would
+[22:41:14] <Nodus> Unless this is going to be a completely feature modular wm, you're basically recreating the wheel with a different colour of spoke.
+[22:41:15] <MonkeyofDoom> e.g. window menus generated by external programs and returning generated actions
+[22:41:23] <MonkeyofDoom> I'm trying to make it as modular as possible
+[22:41:34] <MonkeyofDoom> if at all possible even the window decorator will be a separate program
+[22:43:14] <MonkeyofDoom> and I don't know of another minimalistic WM that has that ability, at the very least
+[22:43:40] <Nodus> But, them all being open source, why not contribute to an existing project?
+[22:44:08] <L> dwm does the window menu stuff
+[22:44:08] <Nodus> Or simply patch a version for yourself that removes or includes additional features you want.
+[22:44:10] <MonkeyofDoom> with the event/action configuration system I'm hoping to make a WM general enough to do a wider variety of things than basically any other wm
+[22:44:15] <L> and, uh, uzbl does similar things actually
+[22:44:17] <Nodus> ^
+[22:44:22] <MonkeyofDoom> L: oh?
+[22:44:29] <L> dwm uses dmenu for everything
+[22:44:39] <L> you can use it like an alt-tabber and stuff
+[22:44:44] <MonkeyofDoom> mm
+[22:44:46] <L> (default config doesn't though)
+[22:45:05] <MonkeyofDoom> can it do things like an actual window menu?
+[22:45:11] <L> technically you can use any other menu program too
+[22:45:13] <MonkeyofDoom> like, what Windows gives if you right-click the titlebar
+[22:45:16] <MonkeyofDoom> or w/e
+[22:45:23] <MonkeyofDoom> L: mygtkmenu :D
+[22:45:53] <L> well, not with dwm, but you could with wmii
+[22:45:58] <L> dwm has no remote control interface
+[22:46:01] <MonkeyofDoom> ah :/
+[22:46:05] <MonkeyofDoom> what's wmii's like?
+[22:46:15] <L> never really played with it
+[22:46:17] <MonkeyofDoom> mm
+[22:46:19] <L> rtfm I guess
+[22:46:26] <MonkeyofDoom> ,,,
+[22:46:28] <MonkeyofDoom> ...*
+[22:46:30] <L> I know it has one though
+[22:46:34] <MonkeyofDoom> "did you mean, 'wii remote'?"
+[22:46:42] <MonkeyofDoom> NO I DID NOT
+[22:46:53] <L> dwm doesn't, it prides itself on taking no outside input except window titles and the root window for its panel-y display
+[22:47:12] <MonkeyofDoom> that's a good thing?
+[22:47:13] <MonkeyofDoom> w/e
+[22:47:26] <L> supposedly
+[22:47:34] <L> the website brags about it at length!
+[22:47:40] <MonkeyofDoom> heh
+[22:47:52] <Nodus> ACTION considers it a good thing.
+[22:48:15] <MonkeyofDoom> why/
+[22:48:16] <MonkeyofDoom> ?*
+[22:48:19] <Nodus> KISS
+[22:48:24] <MonkeyofDoom> mm, I suppose
+[22:48:52] <MonkeyofDoom> fewer entrypoints makes for easier debugging
+[22:48:56] <Nodus> Simplistic framework. Simplistic design philosophy. Put in, get out.
+[22:49:10] <MonkeyofDoom> rawr
+[22:51:20] <MonkeyofDoom> "Figure 1: Wmii with system statistics and a bleak forest."
+[22:53:35] <MonkeyofDoom> wmii's remote interface looks good but wmii itself handles some thing I'd prefer be modularized out
+[22:54:58] <MonkeyofDoom> my evaluation of wmii atm: respectable but not sufficient for what I'd like to run
+[22:54:59] <Shishichi> Also a pony.
+[22:55:44] <Nodus> MonkeyofDoom, but that's the flaw in all of this. Always.
+[22:55:53] <Nodus> "not sufficient" != "write something from the ground up"
+[22:56:19] <Nodus> That's the tragic philosophy of most open source developers. "I don't like it, I'm going to fork it/write my own."
+[22:56:43] <Nodus> Code reuse was a big part of why Open Source was so strongly pushed back when I remember GPL being first managed widespread.
+[22:56:47] <MonkeyofDoom> I could hack some stuff onto it
+[22:56:49] <MonkeyofDoom> sure
+[22:56:58] <Nodus> Don't hack it. Do it right.
+[22:57:03] <Nodus> But that doens't mean start from zero.
+[22:57:05] <MonkeyofDoom> but that would be inelegant and misses the point that there's a reason it doesn't have the feature yet
+[22:57:19] <Nodus> The reason is 99% of the time: The developer didn't want it. 
+[22:57:27] <Nodus> Much like the reasons behind you won't include the features you don't like.
+[22:57:57] <MonkeyofDoom> I don't think the features I want would mesh well with wmii
+[22:58:00] <Nodus> That doesn't mean the feature can't exist, and activated within a configuration file, on a project that is already active, maintained, developed, and in need of a stronger support crowd.
+[22:58:33] <Nodus> I fought people with this when I was 17. Innovation is great. Starting over is just splintering OSS even more.
+[22:58:39] <MonkeyofDoom> software, imo, doesn't need a support crowd
+[22:58:50] <Nodus> Sadly, itrw, it does.
+[22:58:56] <MonkeyofDoom> what for?
+[22:59:14] <Nodus> Multiple minds. Multiple eyes. Multiple viewpoints.
+[22:59:21] <MonkeyofDoom> they're nice
+[22:59:23] <MonkeyofDoom> but need?
+[22:59:46] <Nodus> Of course need. Do you think Windows is the pinnacle of perfection?
+[22:59:53] <MonkeyofDoom> not really
+[22:59:58] <Nodus> That's my point.
+[23:00:04] <MonkeyofDoom> how so?
+[23:00:23] <MonkeyofDoom> Microsoft is pretty huge and has loads of people supporting it
+[23:00:31] <Nodus> Not without being paid.
+[23:00:58] <Nodus> There's no Windows Development Community (for the OS). There's no breathe of fresh air. A lot of it is marketing-based.
+[23:02:16] <Nodus> And this isn't just about wms, either.
+[23:02:41] <Nodus> This could be about your music player. And I'd still say "Either support and develop with an existing project, or go closed source."
+[23:02:41] <Shishichi> I know a decent player for Windows: Foobar2000, www.foobar2000.org - FaiDio support included
+[23:02:49] <MonkeyofDoom> heh
+[23:02:57] <Nodus> !shutup
+[23:02:58] <Shishichi> Will do.
+[23:03:01] <MonkeyofDoom> I couldn't be further from agreeing
+[23:03:15] <MonkeyofDoom> though I do use an existing audio player and send bug reports from time to time
+[23:03:23] <Nodus> Of course you don't agree :P
+[23:03:25] <MonkeyofDoom> hehe
+[23:03:55] <Nodus> If everyone agreed on code-reuse and helping projects as the community they claim Linux to be, we wouldn't have 100+ distros, horribly maintained forks, and thousands of wheels reinvented.
+[23:03:57] <MonkeyofDoom> I'd say new projects are one of the most important parts of open-source software, if you want to look at it from a standpoint of continuing innovation and improvement
+[23:04:20] <Nodus> But that's flawed logic. You submit that innovation and creativity can only come in the form of something completely unattached to something else.
+[23:04:25] <MonkeyofDoom> no, I don't
+[23:04:31] <MonkeyofDoom> but I submit that they often do
+[23:04:46] <MonkeyofDoom> and that it's not a problem that they do
+[23:04:57] <Nodus> And if you had an innovative idea or philosophy, I'd support you on it.
+[23:05:13] <Nodus> But you have a bitch about various features that exist, or do not exist, in certain pieces of software.
+[23:05:19] <MonkeyofDoom> yeah
+[23:05:20] <Nodus> So? Add them. Or remove them. It's open.
+[23:05:30] <Nodus> Otherwise what's the point?
+[23:05:43] <MonkeyofDoom> I don't feel like adding features like a laundry list is the right way to develop and improve software
+[23:05:54] <MonkeyofDoom> programs should be more generalized if at all possible
+[23:05:56] <Shishichi> In fact, the premise holds for all groups. I have discovered a truly remarkable proof of this theorem which this macro is too small to contain.
+[23:05:59] <Nodus> !shutup
+[23:06:24] <Nodus> MonkeyofDoom, that's great :D That's awesome. That's the UNIX philosophy.
+[23:06:27] <Nodus> That isn't what you're doing.
+[23:06:30] <MonkeyofDoom> no?
+[23:06:38] <Nodus> You're building Yet Another Window Manager.
+[23:06:44] <MonkeyofDoom> I'm trying to write a WM that takes a more general approach than any I've used
+[23:07:12] <Nodus> But with nothing all that different about it.
+[23:07:22] <Nodus> It'll just have the features you like consolidated.
+[23:07:22] <MonkeyofDoom> I could indeed try to mutate an existing WM into what I would like to see as the product of this project
+[23:07:46] <Nodus> You're not innovating, you're splintering. You're taking everything you like and moving into a brand new piece of software.
+[23:07:55] <Nodus> Things that already exist.
+[23:08:31] <MonkeyofDoom> and things that don't already exist shouldn't be merged into existing projects?
+[23:08:32] <Nodus> But, who cares, right? Far be it from someone to actually encourage the OSS philosophy back from the 80s.
+[23:08:48] <MonkeyofDoom> what's the core of that philosophy?
+[23:08:57] <MonkeyofDoom> or the relevant portion?
+[23:09:48] <Nodus> The sharing and reuse of technology to further the community as a whole.
+[23:10:25] <MonkeyofDoom> mm
+[23:10:40] <MonkeyofDoom> my stance, with respect to this project and that philosophy
+[23:10:56] <MonkeyofDoom> is that writing reusable software is definitely an important goal
+[23:11:08] <MonkeyofDoom> but in terms of reusing software
+[23:11:25] <MonkeyofDoom> reuse anything you can find that will make your program more elegant, faster, better
+[23:11:30] <MonkeyofDoom> but don't reuse things just because they exist
+[23:11:46] <Nodus> And that is the dividing line between our very different OSS generations.
+[23:12:02] <MonkeyofDoom> are you saying you'd suggest reusing something just because it exists?
+[23:12:23] <MonkeyofDoom> trying not to put words in your mouth
+[23:12:25] <Nodus> The end goal was always 100% modularity once a program could reach enough reuse maturity to warrant it.
+[23:13:01] <Nodus> Reusing something and implementing ideas into it (so long as it is directly related to it) encourages the maturity of that software to an eventual state of modularity.
+[23:13:25] <Nodus> The line was: "Are you making X program to be nothing but a framework for loading modules, or not?"
+[23:13:37] <MonkeyofDoom> mm
+[23:14:11] <MonkeyofDoom> if I had encountered a wm that was designed in that way, I'd quite likely be writing code for it right now
+[23:14:13] <Nodus> If your project is just a, what's the word used for CD collections, a Greatest Hits (for Monkey) wm then it isn't productive in the slightlest.
+[23:14:21] <MonkeyofDoom> I agree
+[23:14:43] <Nodus> If your project was "I've developed a way to have a wm core that has the sole purpose of loading external modules for the entire featureset, based o X ruleset."
+[23:14:51] <MonkeyofDoom> and although there's nothing /wrong/ with writing code that just you will ever like or use, it's not /useful/ or productive really
+[23:14:52] <Nodus> Then I'd throw money at you, like I did projects in the past.
+[23:15:14] <MonkeyofDoom> well, I don't need any money to implement this, hopefully
+[23:15:19] <MonkeyofDoom> but I understand your point
+[23:16:00] <Nodus> A large part of why I stepped out of the OSS community (but left my patches in GPL), is because the new wave of developers began to splinter -everything-.
+[23:16:22] <Nodus> I can't imagine what state linux would be in if the Old Guard surrounding the Linux kernel, died.
+[23:16:35] <MonkeyofDoom> what is your opinion on splintering? just that it causes less-concentrated efforts, and therefore less progress in each project/splinter?
+[23:16:42] <Nodus> We wouldn't have Linux + patchsets. We'd have 1000000 versions of the kernel.
+[23:16:45] <MonkeyofDoom> yeah
+[23:16:57] <MonkeyofDoom> the Linux kernel is a case where I personally wouldn'
+[23:17:06] <Nodus> Give me a moment to explain my opinion on splintering. Because it's a dangerous minefield.
+[23:17:06] <MonkeyofDoom> t be of a mind to start over from scratch
+[23:17:10] <MonkeyofDoom> okay
+[23:18:38] <Nodus> My opinion on splintering is that it is helpful when there is a 1. political stalemate for featuresets   2. something innovative that when implemented requires an entire rewrite.
+[23:19:33] <Nodus> In nearly every other case, that doesn't include personal-learning projects, I view splintering as harmful to overall progress of both the project, the OSS width as a whole, and a more complex and harrowing field for newcomers* to enter
+[23:19:45] <Nodus> *newcomers being either new developers, new artists, or even new computer users
+[23:20:57] <MonkeyofDoom> in what ways is splintering harmful in those senses?
+[23:21:55] <Nodus> That doesn't parse, for whatever reason. What?
+[23:22:18] <MonkeyofDoom> how is splintering harmful to project progress and the OSS width as a whole?
+[23:23:29] <Nodus> Project progress is only as constant as the rate of new ideas and viewpoints.
+[23:23:52] <Nodus> If there's a political disagreement, then see my first point on when it is helpful to splinter. 
+[23:23:59] <MonkeyofDoom> and by splitting, the amount of those each branch has is less than a unified project would?
+[23:24:00] <MonkeyofDoom> yeah
+[23:24:13] <MonkeyofDoom> would have*
+[23:24:25] <Nodus> If there's no disagreement but it is, instead, a choice to simply not aid the project, then I feel it is harmful in the sense of stifling code and functionality away from a larger group of people that could benefit and improve upon it.
+[23:24:51] <MonkeyofDoom> mmk
+[23:25:02] <Nodus> The number of people on the project isn't directly related the Good Things behind it, I mean.
+[23:25:11] <MonkeyofDoom> alright
+[23:25:16] <Nodus> But the number of people who benefit from the project increases the more people give back to the project.
+[23:25:26] <Nodus> And by that, the more people can improve upon what more people brought, etc.
+[23:25:30] <MonkeyofDoom> yeah
+[23:25:49] <MonkeyofDoom> that said, I don't feel like projects with huge userbases necessarily demonstrate that
+[23:25:53] <MonkeyofDoom> e.g. firefox
+[23:26:02] <Nodus> Howso?
+[23:26:12] <MonkeyofDoom> I don't mean to suggest it as proof-by-example that you're wrong
+[23:26:30] <Nodus> I see Firefox as the pinnacle of wide-developer reuse.
+[23:26:50] <Nodus> (kernel aside)
+[23:26:58] <MonkeyofDoom> I see it as a bloated, PR-obsessed project that abandoned the potential it had to be really great
+[23:27:07] <Nodus> But you're only looking at the final project.
+[23:27:29] <Nodus> The internal community and ideas that flourish from the combination of developers reusing the code has altered how other browsers are designed.
+[23:27:42] <Nodus> Could Firefox be a better browser if it was 100% modular? Naturally.
+[23:28:11] <Nodus> But the focus is on development. The program has encouraged growth and innovation that spreads into other areas of development.
+[23:28:16] <MonkeyofDoom> yeah
+[23:28:52] <Nodus> In a perfect world (I hate talking like this), I'd want every program I run to be 100% modular.
+[23:29:25] <Nodus> But in a development, OSS point of view, the kernel and Firefox are doing incredible things to further their divisions, and the divisions of others. Which is the core of the OSS philosophy I struggled to explain.
+[23:29:50] <MonkeyofDoom> I see
+[23:34:01] <Nodus> Also, don't take this disagreement as a personal attack. I have no issue with you personally.
+[23:34:12] <Nodus> My directness here is simply an old man waving his cane.
+[23:34:38] <MonkeyofDoom> not interpreted as such
+[23:34:43] <MonkeyofDoom> peace, dawg
+[23:35:24] <MonkeyofDoom> with this WM, though
+[23:35:41] <MonkeyofDoom> I did look pretty hard to try and find a project that was close enough to the generality I'm looking to implement
+[23:35:53] <MonkeyofDoom> and I tried to fix fluxbox before I gave up on it
+[23:36:14] <MonkeyofDoom> but as far as I personally can tell it will be more effective to use my time to write a new wm than try to patch an existing one
+[23:36:43] <MonkeyofDoom> more effective in terms of subjective user improvement per LOC or per second
+[23:36:49] <Nodus> Have you given thought to a wm that has no featureset, at all?>
+[23:37:22] <Nodus> ie. A build-your-own-wm modular design.
+[23:37:56] <MonkeyofDoom> well, in its planned state this WM will be pretty fucking close to that
+[23:38:05] <Nodus> What's the line, then?
+[23:38:06] <MonkeyofDoom> but if you have a clearish idea of how that would work
+[23:38:14] <MonkeyofDoom> I'd be very crs to hear it
+[23:38:16] <MonkeyofDoom> the line?
+[23:41:13] <MonkeyofDoom> Nodus, ping: still about?
+[23:41:28] <Nodus> I am
+[23:41:47] <Nodus> The line between what makes it a 100% modular framework of a wm and what makes it pretty fucking close.
+[23:42:42] <MonkeyofDoom> ah
+[23:42:54] <MonkeyofDoom> is it possible to have a 100% modular program?
+[23:43:06] <MonkeyofDoom> I feel like at some point you have to have outlines for what modules can possibly do
+[23:43:18] <MonkeyofDoom> the support behind the API you present
+[23:43:21] <Nodus> That's not the same thing.
+[23:43:58] <MonkeyofDoom> how so?
+[23:43:59] <Nodus> Being 100% modular is requiring all features to be presented modularly. The framework ruleset defines what and how modulars are allowed to interact with the framework.
+[23:44:09] <MonkeyofDoom> hmmm
+[23:44:22] <Nodus> A 95% modular WM, for exmaple, may have everything modular except.. I don't know.. the right-click menu.
+[23:44:25] <MonkeyofDoom> ah
+[23:44:26] <Nodus> For whatever reason, that's hard coded.
+[23:44:31] <MonkeyofDoom> well
+[23:44:47] <MonkeyofDoom> for the WM I'm planning at the moment
+[23:46:37] <MonkeyofDoom> I've defined a configuration model (essentially: actions can be caused by events, actions modifying the state of windows and events being changes to the state of the WM's input sources)
+[23:47:26] <MonkeyofDoom> and the rest of the functionality is bindings between specific events and specific actions, which are user-configured or established programmatically via called executables
+[23:48:09] <MonkeyofDoom> do you feel that the configuration model could be abstracted info a module or external program feasibly?
+[23:48:45] <MonkeyofDoom> it is, more or less, the API which I present to the modular portion (user config and external action-generating programs)
+[23:52:23] FalseProphet has joined #FaiD3.0.
+:Shishichi!notIRCuser@hide-F02D91A.dhcp.stls.mo.charter.com MODE #FaiD3.0 +o FalseProphet
+[23:52:25] <Shishichi> "I SAY AGAIN! THIS HUMBLE SERVANT BESEECHES THE ASSISTANCE OF HEAVEN, THAT THE TYRANNY OF EVIL MEN HARM NOT THE RIGHTEOUS! COORDINATES ZERO-FOUR-LIMA-NOVEMBER-MIKE-FIVER-FIVER-SEVEN-SIX! CLEANSE FOR EFFECT, OVER!" - FalseProphet
+[23:58:58] <Nodus> MonkeyofDoom, I'm paying attention. But with our packing/moving my responses may be delayed.
+[23:59:39] <MonkeyofDoom> no problem
+[23:59:45] <MonkeyofDoom> thanks, btw
+[23:59:50] <Nodus> Hm?
+[23:59:54] <MonkeyofDoom> this has been an enlightening conversation so far, I'd say
+[ 0:00:06] <Nodus> Oh? I had anticipated us just agreeing to disagree.
+[ 0:00:09] <MonkeyofDoom> and any design help I can get is appreciated
+[ 0:00:28] <MonkeyofDoom> I agree with a lot of the more broad points you've made, but not all of them
+[ 0:00:32] <Nodus> Learning about your future design has given me some thought and enlightenment, so we're square.
+[ 0:00:56] <Nodus> As for the configuration module(if so called), that's the hardest part for a developer to decide upon when dealing with a modular framework.
+[ 0:01:17] <Nodus> Think about it from the perspective of a 3rd party developer, instead of your own.
+[ 0:01:31] <Nodus> Would your configuration method, as is, be constricting or limited in a way that they may want more control or options over?
+[ 0:01:36] <MonkeyofDoom> hmmm
+[ 0:01:57] <MonkeyofDoom> I don't feel like the notion of events and actions as I have them would be 
+[ 0:02:07] <MonkeyofDoom> but the way in which they're implemented definitely could
+[ 0:02:11] <Nodus> Give me a practical example, that would work much easier with my mind.
+[ 0:02:26] <MonkeyofDoom> of what events and actions do/signify?
+[ 0:02:56] <Nodus> I'm even more confused, now.
+[ 0:03:08] <MonkeyofDoom> what are you looking of an example for?
+[ 0:03:11] <MonkeyofDoom> aaaaaa
+[ 0:03:13] <MonkeyofDoom> for an example of
+[ 0:03:15] <MonkeyofDoom> sorry
+[ 0:03:20] <Nodus> Take your time.
+[ 0:05:39] <MonkeyofDoom> so, if a user wants to set "mod4+q" to close the current window, they would configure under the event "keypress mod4 q" the action "closewindow (findwindow(current))"
+[ 0:05:59] <MonkeyofDoom> (though those syntaxes might not be anything like what's necessary to be flexible and user-friendly)
+[ 0:07:52] <MonkeyofDoom> or they could bind the event of a new window opening to an action that calls a script that calls notify-send if the window is xmessage
+[ 0:08:16] <MonkeyofDoom> but if they need some sort of non-existing event, then they're basically out of luck
+[ 0:08:29] <Nodus> Hm.
+[ 0:08:57] <Nodus> That's complicated because, who get's to define the hotkeys? The module developers or you?
+[ 0:09:09] <MonkeyofDoom> the user defines all the hotkeys
+[ 0:09:26] <Nodus> How will you help them know what functions are available?
+[ 0:09:45] <MonkeyofDoom> I think with something this flexible, documentation and examples are necessary
+[ 0:10:08] <MonkeyofDoom> but for most needs (simple keybinds a la fluxbox or pekwm) it's relatively straightforward
+[ 0:10:21] <Nodus> Be wary of documentation.
+[ 0:10:28] <MonkeyofDoom> oh?
+[ 0:10:32] <Nodus> Assume this is a modular design.
+[ 0:10:44] <Nodus> Let's say there's HotDogWBorders and DangerWBorders.
+[ 0:10:50] <MonkeyofDoom> sure
+[ 0:11:02] <Nodus> Two separate modules that both handle window borders (they didn't like each other, forked from one another).
+[ 0:11:19] <MonkeyofDoom> yeah
+[ 0:11:28] <Nodus> How are you going to take the variables from both programs and let the user know what variable does what?
+[ 0:11:54] <Nodus> HotDogWBorders may have the close window function as   CloseWindow(), which could then be keybound by the user to mod4+q
+[ 0:12:05] <Nodus> But what if DangerWBorders calls it as ShutWindow() ?
+[ 0:12:09] <MonkeyofDoom> ah, I see what you mean
+[ 0:12:21] <MonkeyofDoom> and that points out an area where the wm could use to be more general I guess
+[ 0:12:26] <MonkeyofDoom> because in terms of my current plan
+[ 0:12:35] <MonkeyofDoom> closewindow() is interpreted by the WM itself
+[ 0:12:37] <MonkeyofDoom> the core
+[ 0:13:00] <MonkeyofDoom> because that's essentially one of the core functions /of/ a window manager
+[ 0:13:18] <MonkeyofDoom> but it's also not modular at the moment... and I'm not sure how it would be easily or elegantly modularized
+[ 0:13:23] <MonkeyofDoom> well
+[ 0:13:41] <Nodus> This is all .. academic anyway. If you aren't going for modular, don't. We simply won't agree on the end result, but that shouldn't stop you.
+[ 0:13:43] <MonkeyofDoom> I guess one could write an extensible way to load functions and give them names for configurations
+[ 0:14:03] <L> that sounds like overengineering
+[ 0:14:08] <Nodus> You could also create your own API documentation (the more important documentation, I feel), in which function names or variables are standardized and protected.
+[ 0:14:10] <L> it's a window manager, not a java app
+[ 0:14:14] <MonkeyofDoom> L: heh
+[ 0:14:14] <Nodus> haha
+[ 0:14:20] <MonkeyofDoom> yeah, true
+[ 0:14:59] <Nodus> This of course bears the burden of thinking in advance what all possible functions and features people may implement or use, or the hassle of updating documentation as something new comes along.
+[ 0:15:05] <MonkeyofDoom> the funny thing is that this WM is going to be turing-complete
+[ 0:15:08] <MonkeyofDoom> I think
+[ 0:15:32] <MonkeyofDoom> hmmm, not sure.
+[ 0:16:00] <MonkeyofDoom> it's a deterministic finite-state machine for sure, though
+[ 0:17:02] <Nodus> Which is, in a roundabout way, explains the "reuse a project by expanding upon it".
+[ 0:17:12] <MonkeyofDoom> hmm?
+[ 0:17:13] <Nodus> The longer the featureset, the more "complete" a list would be.
+[ 0:17:22] <MonkeyofDoom> yeah
+[ 0:17:22] <Nodus> In terms of say, all possible features and functionality.
+[ 0:18:23] <Nodus> As I was telling L, in my ideal world (ug) even the CloseWindow function would be modular.
+[ 0:19:02] <Nodus> Simply because someone may find a way to handle that close differently, more efficient, or with options that tie into closing window. (close but save state information for later, is one I've seen before).
+[ 0:19:05] <Nodus> Again though, an ideal world.
+[ 0:19:20] <MonkeyofDoom> well
+[ 0:19:29] <MonkeyofDoom> tbh you /might/ be able to do that with the current plan
+[ 0:19:37] <MonkeyofDoom> if you pass the window ID to an exernal program
+[ 0:19:48] <MonkeyofDoom> then that program does the calls your wm would have done on its own otherwise
+[ 0:19:54] <MonkeyofDoom> to /actually/ close the window
+[ 0:20:01] <MonkeyofDoom> and does its magic to save state or whatnot
+[ 0:20:47] <Nodus> heh, modularity is, at its very nature, overengineering at its finest.
+[ 0:21:11] <MonkeyofDoom> yeah
+[ 0:21:32] <MonkeyofDoom> but I love it when it means you can eliminate logic that's so specific it's silly
+[ 0:21:53] <MonkeyofDoom> e.g. fluxbox's alt-tab handling
+[ 0:22:06] <MonkeyofDoom> nice for the end-user, but specifically implemented and inflexible
